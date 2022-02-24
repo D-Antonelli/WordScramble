@@ -24,7 +24,7 @@ struct ContentView: View {
                         .autocapitalization(.none)
                 }
                 
-                Section {
+                Section() {
                     ForEach(usedWords, id: \.self) { word in
                         HStack {
                             Image(systemName: "\(word.count).circle")
@@ -52,6 +52,11 @@ struct ContentView: View {
         let answer = newWord.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         
         guard answer.count > 0 else { return }
+        
+        guard isValid(word: answer) else {
+            wordError(title: "Invalid word", message: "Word is either too short or exact copy of the start word!")
+            return
+        }
         
         guard isOriginal(word: answer) else {
             wordError(title: "Word used already", message: "Be more original!")
@@ -86,6 +91,11 @@ struct ContentView: View {
         }
         
         fatalError("Could not load start.txt from bundle.")
+    }
+    
+
+    func isValid(word: String) -> Bool {
+        return word.count > 3 && word != rootWord;
     }
     
     func isOriginal(word: String) -> Bool {
