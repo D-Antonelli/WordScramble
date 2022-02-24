@@ -9,14 +9,16 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var usedWords = [String]()
+    @State private var allWords = [String]()
     @State private var rootWord = ""
     @State private var newWord = ""
+    @State private var score = 0
     
     @State private var errorTitle = ""
     @State private var errorMessage = ""
     @State private var showingError = false
     
-    @State private var allWords = [String]()
+
     
     var body: some View {
         NavigationView {
@@ -26,7 +28,7 @@ struct ContentView: View {
                         .autocapitalization(.none)
                 }
                 
-                Section() {
+                Section {
                     ForEach(usedWords, id: \.self) { word in
                         HStack {
                             Image(systemName: "\(word.count).circle")
@@ -36,11 +38,18 @@ struct ContentView: View {
                     }
                 }
             }
+            
             .toolbar() {
                 ToolbarItem() {
                     Button("Restart Game") {
                         restartGame()
                     }
+                }
+            }
+            
+            .toolbar() {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Text("Score: \(score)")
                 }
             }
             .navigationTitle(rootWord)
@@ -53,6 +62,7 @@ struct ContentView: View {
             } message: {
                 Text(errorMessage)
             }
+            
         }
 
         
@@ -87,7 +97,7 @@ struct ContentView: View {
             usedWords.insert(answer, at: 0)
         }
     
-        
+        score += answer.count
         newWord = ""
     }
     
@@ -107,6 +117,7 @@ struct ContentView: View {
         rootWord = allWords.randomElement() ?? "silkworm"
         usedWords.removeAll()
         newWord.removeAll()
+        score = 0
         return
     }
 
