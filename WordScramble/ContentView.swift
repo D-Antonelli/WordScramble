@@ -16,6 +16,8 @@ struct ContentView: View {
     @State private var errorMessage = ""
     @State private var showingError = false
     
+    @State private var allWords = [String]()
+    
     var body: some View {
         NavigationView {
             List {
@@ -34,6 +36,13 @@ struct ContentView: View {
                     }
                 }
             }
+            .toolbar() {
+                ToolbarItem() {
+                    Button("Restart Game") {
+                        restartGame()
+                    }
+                }
+            }
             .navigationTitle(rootWord)
             .onSubmit {
                 addNewWord()
@@ -45,6 +54,7 @@ struct ContentView: View {
                 Text(errorMessage)
             }
         }
+
         
     }
     
@@ -84,7 +94,7 @@ struct ContentView: View {
     func startGame() {
         if let startWordsURL = Bundle.main.url(forResource: "start", withExtension: "txt") {
             if let startWords = try? String(contentsOf: startWordsURL) {
-                let allWords = startWords.components(separatedBy: "\n")
+                allWords = startWords.components(separatedBy: "\n")
                 rootWord = allWords.randomElement() ?? "silkworm"
                 return
             }
@@ -93,9 +103,15 @@ struct ContentView: View {
         fatalError("Could not load start.txt from bundle.")
     }
     
+    func restartGame() {
+        rootWord = allWords.randomElement() ?? "silkworm"
+        usedWords.removeAll()
+        newWord.removeAll()
+        return
+    }
 
     func isValid(word: String) -> Bool {
-        return word.count > 3 && word != rootWord;
+        return word.count > 2 && word != rootWord;
     }
     
     func isOriginal(word: String) -> Bool {
